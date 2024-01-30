@@ -35,8 +35,9 @@ def test_login_page_transfer(user_login_fixture):
     user_login_fixture.click_element(auth_login)
     time.sleep(5)
 
+    email_click = email.get_attribute('clickable')
     
-    assert (email.get_attribute('clickable'))
+    assert email_click == 'true'
     assert (passw.get_attribute('password'))
     assert (forg_pss.get_attribute('displayed'))
     assert forg_pss.text == 'Forgot password?'
