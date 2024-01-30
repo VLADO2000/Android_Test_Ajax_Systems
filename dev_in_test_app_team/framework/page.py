@@ -1,4 +1,4 @@
-from appium.webdriver.common.appiumby import AppiumBy
+
 import time
 
 class Page:
@@ -6,10 +6,17 @@ class Page:
     def __init__(self, driver):
         self.driver = driver
 
-    def find_element(self, str_contains: str):
-        self.element = self.driver.find_element(AppiumBy.CLASS_NAME, str_contains)
-        return self.element
+    def find_element(self, condition, str_contains):
+        element = self.driver.find_element(condition, str_contains)
+        return element
 
-    def click_element(self):
-        self.element.click()
-        time.sleep(2)
+    def click_element(self, element):
+        element.click()
+    
+    def send_keys(self, text, element=None):
+        element.send_keys(text)
+    
+    
+
+       
+        
