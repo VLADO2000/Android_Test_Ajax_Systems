@@ -1,46 +1,28 @@
-from appium.webdriver.common.appiumby import AppiumBy
 import time
 
+def test_welcome_login_page(user_login_fixture):
+    assert (user_login_fixture.assert_hello_login_btn_exists())
 
-def test_first_page_correctness(user_login_fixture):
-    login = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.TextView[@resource-id="com.ajaxsystems:id/text" and @text="Log In"]')
+def test_navigation_toward_auth_page(user_login_fixture):
+    user_login_fixture.navigate_to_input_login_page()
+    assert (user_login_fixture.assert_hello_login_navigation_correctness())
+
+def test_credetials_input(user_login_fixture):
+    user_login_fixture.input_email_password(email='qa.ajax.app.automation@gmail.com',
+                                            password='qa_automation_password')
     
-    #Todo
-    #login.click()
-    # login.send_keys()
-    #Todo
+    user_login_fixture.driver.implicitly_wait(2)
+
+    email_auto_input = user_login_fixture.find_element(locator=
+                                                       user_login_fixture._email_login_field_xpath)
     
-    assert login.text == 'Log In'
+    email_auto_input_text = user_login_fixture.get_text(email_auto_input)
+    user_login_fixture.driver.implicitly_wait(2)
 
-def test_login_page_transfer(user_login_fixture):
-    login = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authHelloLogin"]')
-    user_login_fixture.click_element(login)
-    time.sleep(3)
+    user_login_fixture.click_login_auth_submit()
+    user_login_fixture.driver.implicitly_wait(2)
 
-    email = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginEmail"]')
-    user_login_fixture.send_keys('qa.ajax.app.automation@gmail.com', email)
-
-    passw = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginPassword"]')
-    user_login_fixture.send_keys('qa_automation_password', passw)
-
-    forg_pss = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.TextView[@resource-id="com.ajaxsystems:id/text" and @text="Forgot password?"]')
-    
-    auth_login = user_login_fixture.find_element(AppiumBy.XPATH, 
-            '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authLogin"]')
-    user_login_fixture.click_element(auth_login)
-    time.sleep(5)
-
-    email_click = email.get_attribute('clickable')
-    
-    assert email_click == 'true'
-    assert (passw.get_attribute('password'))
-    assert (forg_pss.get_attribute('displayed'))
-    assert forg_pss.text == 'Forgot password?'
+    assert email_auto_input_text == 'qa.ajax.app.automation@gmail.com'
 
 
     

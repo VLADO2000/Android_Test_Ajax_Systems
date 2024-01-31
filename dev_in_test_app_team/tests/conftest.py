@@ -33,7 +33,7 @@ def driver(appium_service):
     options = UiAutomator2Options()
     options.load_capabilities(android_get_desired_capabilities())
     driver = webdriver.Remote(f'http://{APPIUM_HOST}:{APPIUM_PORT}', options=options)
-    driver.implicitly_wait(5)
+    driver.implicitly_wait(2)
     yield driver
     driver.quit()
 
