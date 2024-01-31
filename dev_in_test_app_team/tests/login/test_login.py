@@ -1,5 +1,7 @@
 import time
 
+_add_hub_after_login_xpath = '//android.view.ViewGroup[@resource-id="com.ajaxsystems:id/hubAdd"]'
+
 def test_welcome_login_page(user_login_fixture):
     assert (user_login_fixture.assert_hello_login_btn_exists())
 
@@ -13,16 +15,10 @@ def test_credetials_input(user_login_fixture):
     
     user_login_fixture.driver.implicitly_wait(2)
 
-    email_auto_input = user_login_fixture.find_element(locator=
-                                                       user_login_fixture._email_login_field_xpath)
-    
-    email_auto_input_text = user_login_fixture.get_text(email_auto_input)
-    user_login_fixture.driver.implicitly_wait(2)
-
     user_login_fixture.click_login_auth_submit()
-    user_login_fixture.driver.implicitly_wait(2)
 
-    assert email_auto_input_text == 'qa.ajax.app.automation@gmail.com'
+    assert (user_login_fixture.is_element_present(locator=_add_hub_after_login_xpath,
+                                                  locator_type='xpath'))
 
 
     

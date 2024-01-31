@@ -2,12 +2,9 @@ from .page import Page
 
 
 class LoginPage(Page):
-    _hello_login_btn_id = 'com.ajaxsystems:id/authHelloLogin'
+    
     _hello_login_btn_xpath = '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authHelloLogin"]'
     #Second Log in page elements path
-    _email_login_field_id = 'com.ajaxsystems:id/authLoginEmail'
-    _passw_login_field_id = 'com.ajaxsystems:id/authLoginPassword'
-    _auth_login_btn_id = 'com.ajaxsystems:id/authLogin'
     _email_login_field_xpath = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginEmail"]'
     _passw_login_field_xpath  = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginPassword"]'
     _auth_login_btn_xpath = '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authLogin"]'
@@ -32,10 +29,11 @@ class LoginPage(Page):
     
     def input_email_password(self, email="", password=""):
         if email:
-             self.send_info(locator=self._email_login_field_xpath, locator_type='xpath', info=email)
+             self.send_info(locator=self._email_login_field_xpath, locator_type='xpath' , info=email)
         if password:
             self.send_info(locator=self._passw_login_field_xpath, locator_type='xpath', info=password) 
     
     def click_login_auth_submit(self):
         self.click_element(locator=self._auth_login_btn_xpath, locator_type='xpath')
+        self.driver.implicitly_wait(3)
 

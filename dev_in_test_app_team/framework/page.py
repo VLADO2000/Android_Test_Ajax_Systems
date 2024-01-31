@@ -16,34 +16,6 @@ class Page:
     def __init__(self, driver):
         self.driver = driver
 
-
-    def wait_until_element_is_clickable(self, locator, locator_type="accessibilityid",
-                                        timeout=10, pollFrequency=0.5): 
-        """
-        Waits for an element on expected condition to be clickable
-        : locator: str / Ex: 'id_name'
-        : locatorType: provided by get_bytype on simple str / Ex: 'accessibilityid'
-        : timeout: int in seconds, timeout length
-        : pollFrequency: polling interval for frequent code evaluation 
-        """
-
-        element = None # None servers sentinel role 
-        try:
-            by_type = self.get_by_type(locator_type)
-            self.log.info('Waiting for element with locator' + locator +' to become clickable')
-            wait = WebDriverWait(self.driver, timeout=timeout,
-                                 poll_frequency=pollFrequency, 
-                                 ignored_exceptions=[
-                                     NoSuchElementException,
-                                     ElementNotVisibleException,
-                                     ElementNotSelectableException,
-                                 ])
-            element = wait.until(EC.element_to_be_clickable((by_type, locator)))
-        except:
-            self.log.info("Timeout expired waiting for element with locator: '" + locator + "' to become clickable")
-            print_stack()
-        return element
-
     def wait_until_element_appear(self, locator, locator_type="accessibilityid",
                                   timeout=10, pollFrequency=0.3):
         """
