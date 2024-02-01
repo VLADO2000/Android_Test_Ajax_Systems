@@ -89,7 +89,7 @@ class Page:
             by_type = self.get_by_type(locator_type)
             elements_list = self.driver.find_elements(by_type, locator)
             if len(elements_list) > 0:
-                self.log.info("List of elements has been detected in length" + str(len(elements_list)))
+                self.log.info("List of elements has been detected in length " + str(len(elements_list)))
             elif len(elements_list) == 1:
                 self.log.info("Detected single argumant, find_element would be more suitable for this")
             else:

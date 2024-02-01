@@ -4,12 +4,12 @@ from .page import Page
 class LoginPage(Page):
     
     _hello_login_btn_xpath = '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authHelloLogin"]'
-    #Second Log in page elements path
+    #Authorization Login page elements path
     _email_login_field_xpath = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginEmail"]'
     _passw_login_field_xpath  = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginPassword"]'
     _auth_login_btn_xpath = '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authLogin"]'
     #Decided to put tit here and make less noise in tests
-    #Realize this is not part of login page, but count it as way to go back to it
+    #Realize this is not part of login page, but count it as a way to go back to perform login
     _menu_bar_app_xpath = '//android.widget.ImageView[@resource-id="com.ajaxsystems:id/menuDrawer"]'
     _app_settings_xpath = '//android.view.View[@resource-id="com.ajaxsystems:id/settings"]'
     _sign_out_btn_xpath = '//android.widget.TextView[@resource-id="com.ajaxsystems:id/title" and @text="Sign Out"]'
