@@ -37,3 +37,9 @@ class LoginPage(Page):
         self.click_element(locator=self._auth_login_btn_xpath, locator_type='xpath')
         self.driver.implicitly_wait(3)
 
+    def email_login_field_clear(self):
+        self.clear_field(locator=self._email_login_field_xpath, locator_type='xpath')
+    
+    def passw_login_field_clear(self):
+        self.clear_field(locator=self._passw_login_field_xpath, locator_type='xpath')
+
