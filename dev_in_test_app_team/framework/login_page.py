@@ -8,7 +8,13 @@ class LoginPage(Page):
     _email_login_field_xpath = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginEmail"]'
     _passw_login_field_xpath  = '//android.widget.EditText[@resource-id="com.ajaxsystems:id/authLoginPassword"]'
     _auth_login_btn_xpath = '//android.widget.FrameLayout[@resource-id="com.ajaxsystems:id/authLogin"]'
-    
+    #Decided to put tit here and make less noise in tests
+    #Realize this is not part of login page, but count it as way to go back to it
+    _menu_bar_app_xpath = '//android.widget.ImageView[@resource-id="com.ajaxsystems:id/menuDrawer"]'
+    _app_settings_xpath = '//android.view.View[@resource-id="com.ajaxsystems:id/settings"]'
+    _sign_out_btn_xpath = '//android.widget.TextView[@resource-id="com.ajaxsystems:id/title" and @text="Sign Out"]'
+  
+
     
     def __init__(self, driver):
         super().__init__(driver)
@@ -42,4 +48,13 @@ class LoginPage(Page):
     
     def passw_login_field_clear(self):
         self.clear_field(locator=self._passw_login_field_xpath, locator_type='xpath')
+
+    def sign_out_and_navigate_to_login(self):
+        self.click_element(locator=self._menu_bar_app_xpath, locator_type='xpath')
+        self.click_element(locator=self._app_settings_xpath, locator_type='xpath')
+        self.click_element(locator=self._sign_out_btn_xpath, locator_type='xpath')
+        self.navigate_to_input_login_page()
+        self.email_login_field_clear()
+        self.passw_login_field_clear()
+
 

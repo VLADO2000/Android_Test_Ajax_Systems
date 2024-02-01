@@ -74,7 +74,8 @@ class Page:
                                                      locator_type=locator_type)
             if element is not None:
                 self.log.info("Element found with locator: '" + locator + "'")
-            self.log.info('Search for element has not been successful, locator: '+locator)
+            else:
+                self.log.info('Search for element has not been successful, locator: '+locator)
         except:
             self.log.error("Element hasn\'t been found with locator: '" + locator + "'")
         return element
