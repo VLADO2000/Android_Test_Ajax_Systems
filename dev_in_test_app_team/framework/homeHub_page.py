@@ -1,31 +1,38 @@
-from .login_page import LoginPage
+from appium.webdriver.common.appiumby import AppiumBy 
+from selenium.webdriver.common.by import By 
 
-class HomeHubPage(LoginPage):
+from .page import Page
+
+class HomeHubPage(Page):
     _add_new_hub_btn_xpath = '//android.view.ViewGroup[@resource-id="com.ajaxsystems:id/hubAdd"]'
     _menu_bar_app_xpath = '//android.widget.ImageView[@resource-id="com.ajaxsystems:id/menuDrawer"]'
     _app_settings_xpath = '//android.view.View[@resource-id="com.ajaxsystems:id/settings"]'
     _sign_out_btn_xpath = '//android.widget.TextView[@resource-id="com.ajaxsystems:id/title" and @text="Sign Out"]'
-  
-
+   #Subbuttons
+    _back_settings_btn_xpath='//android.widget.ImageButton[@resource-id="com.ajaxsystems:id/back"]'
+    _side_bar_settings= '//android.widget.TextView[@resource-id="com.ajaxsystems:id/title" and @text="App Settings"]',
+    _side_bar_help = '//android.widget.TextView[@resource-id="com.ajaxsystems:id/title" and @text="Help"]'
+    _side_bar_icons_xpath = '//android.view.View[@resource-id="com.ajaxsystems:id/atomImage"]'
+    
     def __init__(self, driver):
         super().__init__(driver)
         self.driver = driver
     
-    def add_new_hub(self):
-        self.click_element(locator=self.add_new_hub, locator_type='xpath')
+    def get_add_new_hub_btn(self):
+        return self.find_element(locator=self._add_new_hub_btn_xpath, 
+                                 locator_type=By.XPATH)
     
-    def assert_add_hub_button(self):
-        return (self.is_element_present(locator=self._add_new_hub_btn_xpath, locator_type='xpath'))
     
-    def click_side_menu_bar(self):
-        self.click_element(locator=self._menu_bar_app_xpath, locator_type='xpath')
-        self.driver.implicitly_wait(1)
+    def get_side_menu_bar(self):
+        self.find_element(locator=self._menu_bar_app_xpath, 
+                          locator_type=By.XPATH)
+        self.driver.implicitly_wait(0)
     
-    def click_menu_bar_elem_sequentialy(self, locator, locator_type='xpath'):
-        """Click on element in the side menu sequentially by index"""
-        self.click_element(locator=locator, locator_type=locator_type)
-        self.driver.implicitly_wait(1)
-        #Back button click
-        self.click_element(locator='//android.widget.ImageButton[@resource-id="com.ajaxsystems:id/back"]', 
-                           locator_type=locator_type)
-        self.click_side_menu_bar()
+    def get_sidebar_list(self):
+        sidebar_list = self.find_elements_list(locator=self._side_bar_icons_xpath,
+                                               locator_type=By.XPATH)
+        return sidebar_list
+    
+    
+        
+        

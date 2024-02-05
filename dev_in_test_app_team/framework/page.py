@@ -3,9 +3,10 @@ import time
 from traceback import print_stack
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import *
-from appium.webdriver.common.appiumby import AppiumBy 
-from selenium.webdriver.common.by import By 
+from selenium.common.exceptions import (NoSuchElementException,
+                                     ElementNotVisibleException,
+                                     ElementNotSelectableException)
+
 
 from utils.logger import logger
 
@@ -16,7 +17,7 @@ class Page:
     def __init__(self, driver):
         self.driver = driver
 
-    def wait_until_element_appear(self, locator, locator_type="accessibilityid",
+    def wait_until_element_appear(self, locator, locator_type,
                                   timeout=10, pollFrequency=0.3):
         """
         Waits for an element on expected condition to be clickable
@@ -27,7 +28,6 @@ class Page:
         """
         element = None # None servers sentinel role 
         try:
-            by_type = self.get_by_type(locator_type)
             self.log.info('Waiting for element with locator' + locator +' to appear')
             wait = WebDriverWait(self.driver, timeout=timeout,
                                  poll_frequency=pollFrequency, 
@@ -36,35 +36,13 @@ class Page:
                                      ElementNotVisibleException,
                                      ElementNotSelectableException,
                                  ])
-            element = wait.until(EC.visibility_of_element_located((by_type, locator)))
+            element = wait.until(EC.visibility_of_element_located((locator_type, locator)))
         except:
             print_stack()
         return element
     
-    def get_by_type(self, locator_type):
-        """
-        Consume a short-convinient string and returns the By.LOCATORTYPE
-        :locator_type: String
-        :return: By.LOCATORTYPE
-        """
-        locator_type = locator_type.lower()
-        if locator_type == 'accessibilityid':
-            return AppiumBy.ACCESSIBILITY_ID
-        elif 'class' in locator_type:
-            return By.CLASS_NAME
-        elif 'id' in locator_type:
-            return By.ID
-        elif locator_type == 'xpath':
-            return By.XPATH
-        elif 'uiautomator' in locator_type:
-            return AppiumBy.ANDROID_UIAUTOMATOR
-        elif ('link' in locator_type) or ('text' in locator_type):
-            return By.PARTIAL_LINK_TEXT
-        else:
-            self.log.error("Locator type not supported - or check the argument you passed in")
-        return False
 
-    def find_element(self, locator, locator_type='accessibilityid'):
+    def find_element(self, locator, locator_type):
         """
         Search for an element on a page 
         """
@@ -86,8 +64,7 @@ class Page:
         """
         elements_list = None
         try:
-            by_type = self.get_by_type(locator_type)
-            elements_list = self.driver.find_elements(by_type, locator)
+            elements_list = self.driver.find_elements(locator_type, locator)
             if len(elements_list) > 0:
                 self.log.info("List of elements has been detected in length " + str(len(elements_list)))
             elif len(elements_list) == 1:
@@ -98,78 +75,54 @@ class Page:
             self.log.error("Invalid arguments recieved for find_elements_list")
         return elements_list
             
-    def click_element(self, locator="", locator_type="accessibilityid", element=None):
+    def click_element(self, element=None):
         """
         Click action on the element
         """
         try:
-            if locator:
-                element = self.find_element(locator, locator_type)
             element.click()
-            self.log.info('Click performed on element with locator' + locator)
+            self.log.info('Click performed on element with locator' + repr(element))
         except:
             self.log.error(
-                "Can't permorm click on element with locator" + locator
+                "Can't permorm click on element" + repr(element)
             )
             print_stack()
         
-    def send_info(self, info, locator="", locator_type="accessibilityid", element=None):
+    def send_info(self, text, element=None):
         """
         Send keys to input field
         """
         try:
-            if locator:
-                element = self.find_element(locator, locator_type)
-            element.send_keys(info)
-            self.log.info('Information was sent to element with locator '+locator)
+            element.send_keys(text)
+            self.log.info('Information: '+text+' was sent to element '+ repr(element))
         except:
             self.log.error(
-                "Failed to send information to element with locator "+locator
+                "Failed to send information "+text+" to element "+ repr(element)
             )
             print_stack()
     
-    def get_text(self, element=None, info=""): 
+    def get_text(self, element=None): 
         """
         Get Text from the element
         """
         try:
             text = element.text
             if len(text) > 0:
-                self.log.info("Text of the element "+ info +"is :: '" + text + "'")
+                self.log.info("Text of the element is :: '" + text + "'")
                 text = text.strip()
         except:
-            self.log.error("Unable to get text of the element" + info)
+            self.log.error("Unable to get text of the element")
             text = None
         return text
     
-    def clear_field(self, locator="", locator_type="accessibilityid", element=None):
+    def clear_field(self, element=None):
         """
         Clear field of provided element or just use combination of locator and locator_type
         to not repeat yourself
         """
-        
-        if locator:
-            self.log.debug("clearing field of element by locator")
-            element = self.find_element(locator, locator_type)
         element.clear()
-        self.log.info("Element has been cleared maybe with provided locator"+ locator)
+        self.log.info("Element "+repr(element)+" has been cleared")
     
-    def is_element_present(self, locator="", locator_type="accessibilityid", element=None):
-        """
-        Check for presence of an element 
-        return boolean value 
-        """
-        try:
-            if locator:
-                element = self.find_element(locator, locator_type)
-            if element is not None:
-                self.log.info("Element with locator" + "is presented")
-                return True
-            else:
-                return False
-        except:
-            self.log.error("No element with locator" + locator +"presented")
-        return False
     
     def list_element_presence(self, locator, locator_type="accessibilityid"):
         """
@@ -186,32 +139,28 @@ class Page:
             self.log.error("Element(s) are not presented")
             return False
     
-    def is_element_displayed(self, locator="", locator_type="accessibilityid", element=None):
+    def is_element_displayed(self, element=None):
         """
         Mock of is_displayed() webdriver method
         """
         is_displayed = False
         try:
-            if locator:
-                element = self.find_element(locator, locator_type)
             if element is not None:
                 is_displayed = element.is_displayed()
-                self.log.info("Element is displayed with locator" + locator)
+                self.log.info("Element is displayed")
             else:
-                self.log.info("Element is not displayed with locator" + locator)
+                self.log.info("Element is not displayed ")
                 return is_displayed
         except:
             self.log.error("Error on 'is_element_displayed'")
         return is_displayed
     
-    def is_element_enabled(self, locator="", locator_type="accessibilityid", element=None):
+    def is_element_enabled(self, element=None):
         """
         Checking whether the specified element is enabled or not
         """
         is_enable = False
         try:
-            if locator:
-                element = self.find_element(locator, locator_type)
             is_enable = element.is_enabled()
             if is_enable:
                 self.log.info("Element is enable")

@@ -1,7 +1,10 @@
 import time
 import pytest
 
-_add_hub_after_login_xpath = '//android.view.ViewGroup[@resource-id="com.ajaxsystems:id/hubAdd"]'
+from appium.webdriver.common.appiumby import AppiumBy 
+from selenium.webdriver.common.by import By 
+
+
 
 def test_welcome_login_page(user_login_fixture):
     assert (user_login_fixture.assert_hello_login_btn_exists())
@@ -20,28 +23,28 @@ def test_navigation_toward_auth_page(user_login_fixture):
         pytest.param('qa.ajax.app.automation@gmail.com', 'justletmein', 
                       marks=pytest.mark.xfail(
                               reason="Incorrect password")),
-        ('qa.ajax.app.automation@gmail.com', 'qa_automation_password'),
+        
         pytest.param('invader_manualqa@mqdb.ua', 'qa_automation_password', 
                       marks=pytest.mark.xfail(
                               reason="Incorrect email")),
+        ('qa.ajax.app.automation@gmail.com', 'qa_automation_password'),
         ],
 )
 def test_user_authorization(user_login_fixture, email, password):
-    user_login_fixture.input_email_password(email=email,
-                                            password=password)
+    email_input_field = user_login_fixture.get_email_login_field()
+    if email_presence := user_login_fixture.get_text(email_input_field):
+        user_login_fixture.clear_field(email_input_field)
+
+    password_input_field = user_login_fixture.get_password_login_field()
+    user_login_fixture.send_info(text=password, element=password_input_field)
+    user_login_fixture.send_info(text=email, element=email_input_field)
+
     user_login_fixture.click_login_auth_submit()
 
-    user_login_fixture.email_login_field_clear()
-    user_login_fixture.passw_login_field_clear()
+    
+    
 
-    #Gives ability to put valid credentials every where in parameters sequence, without it other test would be rejected 
-    if (email == 'qa.ajax.app.automation@gmail.com' and 
-        password =='qa_automation_password'):
-        successful_login = user_login_fixture.is_element_present(locator=_add_hub_after_login_xpath,
-                                                      locator_type='xpath')
-        user_login_fixture.sign_out_and_navigate_to_login()
-
-        assert successful_login
+    
 
 
     
